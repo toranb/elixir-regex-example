@@ -4,7 +4,13 @@ defmodule Regexx.Username do
       if suffix > 0 do
         case Regex.named_captures(~r/.*-(?<suffix>.*[0-9])$/, username) do
           nil ->
-            "#{username}-" <> Integer.to_string(suffix)
+            case String.match?(username, ~r/.*-$/) do
+              false ->
+                "#{username}-" <> Integer.to_string(suffix)
+
+              true ->
+                Regex.replace(~r/-(?!.*-)/, username, "\\1") <> "-#{suffix}"
+            end
 
           %{"suffix" => previous} ->
             previous_number = previous |> String.to_integer()

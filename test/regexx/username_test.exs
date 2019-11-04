@@ -60,4 +60,28 @@ defmodule Regexx.UsernameTest do
 
     assert possible_username == "#{@username}-124"
   end
+
+  test "returns alternative username when original ends with dash but no integer" do
+    possible_username =
+      ["#{@username}-"]
+      |> Username.suggest("#{@username}-")
+
+    assert possible_username == "#{@username}-1"
+  end
+
+  test "returns alternative username when dash integer found within username" do
+    possible_username =
+      ["#{@username}-12-wat"]
+      |> Username.suggest("#{@username}-12-wat")
+
+    assert possible_username == "#{@username}-12-wat-1"
+  end
+
+  test "returns alternative when username ends with double dash" do
+    possible_username =
+      ["#{@username}--"]
+      |> Username.suggest("#{@username}--")
+
+    assert possible_username == "#{@username}--1"
+  end
 end
