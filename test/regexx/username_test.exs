@@ -36,4 +36,28 @@ defmodule Regexx.UsernameTest do
 
     assert possible_username == "#{@username}-2"
   end
+
+  test "returns alternative username when original ends with numeric suffix" do
+    possible_username =
+      ["zipzapzoom", "#{@username}-1"]
+      |> Username.suggest("#{@username}-1")
+
+    assert possible_username == "#{@username}-2"
+  end
+
+  test "returns alternative username when original ends with large numeric suffix" do
+    possible_username =
+      ["zipzapzoom", "#{@username}-122"]
+      |> Username.suggest("#{@username}-122")
+
+    assert possible_username == "#{@username}-123"
+  end
+
+  test "returns alternative username when original ends with numeric suffix and first option is taken" do
+    possible_username =
+      ["zipzapzoom", "#{@username}-122", "#{@username}-123"]
+      |> Username.suggest("#{@username}-122")
+
+    assert possible_username == "#{@username}-124"
+  end
 end

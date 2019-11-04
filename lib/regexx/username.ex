@@ -2,7 +2,15 @@ defmodule Regexx.Username do
   def suggest(all_usernames, username, suffix \\ 0) do
     possible_username =
       if suffix > 0 do
-        "#{username}-" <> Integer.to_string(suffix)
+        case Regex.named_captures(~r/.*-(?<suffix>.*[0-9])$/, username) do
+          nil ->
+            "#{username}-" <> Integer.to_string(suffix)
+
+          %{"suffix" => previous} ->
+            previous_number = previous |> String.to_integer()
+            next_number = previous_number + suffix
+            Regex.replace(~r/#{previous}(?!.*#{previous})/, username, "\\1") <> "#{next_number}"
+        end
       else
         username
       end
